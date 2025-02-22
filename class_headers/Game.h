@@ -13,10 +13,10 @@ class Game {
         std::shared_ptr<Stage> currentStage = nullptr;
         std::shared_ptr<View> camera = nullptr;
         std::shared_ptr<RenderWindow> window = nullptr;
-        void driverShell();
+        void gameDriver();
     public:
         Game();
-        void gameDriver();
+        void driverShell();
 };
 
 #endif
