@@ -11,7 +11,7 @@ Game::Game(){
     //set the first game state
     gameState = 1;
 
-    currentStage = std::make_shared<Stage>();
+    currentStage = std::make_shared<Stage>("square.png", "Stage1.txt");
 
     //allocate necessary variables
     window = std::make_shared<RenderWindow>(sf::VideoMode(WIDTH,HEIGHT), TITLE);

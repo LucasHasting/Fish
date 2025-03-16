@@ -3,25 +3,29 @@
 #include <memory>
 #include <unistd.h>
 
+#include "../class_headers/Screen.h"
 #include "../class_headers/Stage.h"
 #include "../class_headers/NewSprite.h"
 #include "../class_headers/GameConstants.h"
 
 using namespace sf;
 
-//may need to be overidden per stage we have, the basic layout of the stage
-Stage::Stage(){ 
-    //set the sprite
-    exampleSprite = std::make_unique<NewSprite>(exampleSpriteName);
+Stage::Stage(std::string pathSpriteLocation, std::string pathFileLocation){
+    //set the files for the stage
+    this->pathSpriteLocation += pathSpriteLocation;
+    this->pathFileLocation += pathFileLocation;
 
-    //set the sprite's position
-    exampleSprite->sprite->setPosition(0.f, 0.f);
+    //set the path sprite
+    pathSprite = std::make_unique<NewSprite>(this->pathSpriteLocation);
+    pathSprite->sprite->setPosition(0.f, 0.f);
 }
 
-void Stage::driver(std::shared_ptr<sf::RenderWindow> window){
+void Stage::driver(std::shared_ptr<sf::RenderWindow> window) {
     //draw to the screen
-    window->draw(*(exampleSprite->sprite));
+    window->draw(*(pathSprite->sprite));
 
     //display the screen
     window->display();
 }
+
+void Stage::constructPath() {}
