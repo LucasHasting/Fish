@@ -1,0 +1,8 @@
+./class_implementations/Stage.cpp: In member function ‘void Stage::constructPath()’:
+./class_implementations/Stage.cpp:66:22: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+   66 |     for(int i = 1; i < sprite_count.size(); ++i){
+      |                    ~~^~~~~~~~~~~~~~~~~~~~~
+./class_implementations/Stage.cpp: In member function ‘void Stage::drawPath(std::shared_ptr<sf::RenderWindow>)’:
+./class_implementations/Stage.cpp:97:22: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::shared_ptr<NewSprite> >::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+   97 |     for(int i = 0; i < path.size(); ++i){
+      |                    ~~^~~~~~~~~~~~~

@@ -18,8 +18,8 @@ Game::Game(){
     window = std::make_shared<RenderWindow>(sf::VideoMode(WIDTH,HEIGHT), TITLE);
     camera = std::make_shared<View>(FloatRect(WIDTH, WIDTH, HEIGHT, HEIGHT));
 
-    //set camera center to (0, 0)
-    camera->setCenter(0.f, 0.f);
+    //set camera center 
+    camera->setCenter(CENTER_X, CENTER_Y);
     
     //set the camera to the window
     window->setView(*camera);
