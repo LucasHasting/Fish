@@ -4,12 +4,13 @@
 #include <SFML/Graphics.hpp>
 
 #include "Stage.h"
+#include "States.h"
 
 using namespace sf;
 
 class Game {
     private:
-        int gameState = 1;
+        enum States gameState;
         std::shared_ptr<Stage> currentStage = nullptr;
         std::shared_ptr<View> camera = nullptr;
         std::shared_ptr<RenderWindow> window = nullptr;

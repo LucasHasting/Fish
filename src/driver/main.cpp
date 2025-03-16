@@ -2,9 +2,9 @@
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <unistd.h>
-#include "class_headers/Stage.h"
-#include "class_headers/Game.h"
-#include "class_headers/GameConstants.h"
+#include "../class_headers/Stage.h"
+#include "../class_headers/Game.h"
+#include "../class_headers/GameConstants.h"
 
 using namespace sf;
 

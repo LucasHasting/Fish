@@ -4,12 +4,13 @@
 #include "../class_headers/Stage.h"
 #include "../class_headers/Game.h"
 #include "../class_headers/GameConstants.h"
+#include "../class_headers/States.h"
 
 using namespace sf;
 
 Game::Game(){
     //set the first game state
-    gameState = 1;
+    gameState = STAGE_1;
 
     currentStage = std::make_shared<Stage>("square.png", "Stage1.txt");
 
@@ -50,7 +51,9 @@ void Game::driverShell(){
 void Game::gameDriver(){
     //use the current state's driver function
     switch(gameState){
-        case 1:
+        case MAIN_MENU:
+            break;
+        case STAGE_1:
             currentStage->driver(window);
             break;
     }
