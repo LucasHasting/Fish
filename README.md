@@ -1,7 +1,7 @@
 # Fish
 
 ## UML Class Diagram
-![Fish](Fish.png "Fish")
+![Fish](doc/UML/Fish.png "Fish")
 
 ## Running Example
-![Fish](example_when_running.PNG "Fish")
+![Fish](doc/running_example/example_when_running.PNG "Fish")
