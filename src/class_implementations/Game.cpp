@@ -4,7 +4,7 @@
 #include "../class_headers/Stage.h"
 #include "../class_headers/Game.h"
 #include "../class_headers/GameConstants.h"
-#include "../class_headers/States.h"
+#include "../class_headers/GameStates.h"
 
 using namespace sf;
 
@@ -12,7 +12,8 @@ Game::Game(){
     //set the first game state
     gameState = STAGE_1;
 
-    currentStage = std::make_shared<Stage>("square.png", "Stage1.txt", "Enemy1.txt");
+    //construct the stages
+    constructStages();
 
     //allocate necessary variables
     window = std::make_shared<RenderWindow>(sf::VideoMode(WIDTH,HEIGHT), TITLE);
@@ -54,8 +55,17 @@ void Game::gameDriver(){
         case MAIN_MENU:
             break;
         case STAGE_1:
-            currentStage->driver(window);
+            stages[0]->driver(window);
             break;
     }
 }
 
+void Game::constructStages(){
+    //Stage 1 - example descriptions for future stages
+    stages.push_back(std::make_shared<Stage>(
+        "square.png", //path sprite for stage 1
+        "Stage1.txt", //the file containing the path itself
+        "Stage1",     //the name of the stage (folder used for rounds)
+        1             //max rounds for the stage
+    ));
+}

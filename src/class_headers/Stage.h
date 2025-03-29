@@ -9,24 +9,27 @@
 #include "Enemy.h"
 #include "Screen.h"
 #include "GameConstants.h"
+#include "StageStates.h"
 
 using namespace sf;
 
 class Stage : public Screen{
     private:
+        enum StageStates stageState;
+        int maxRounds = 0;
         std::shared_ptr<NewSprite> pathSprite = nullptr;
         std::string pathLocation = "paths/";
         std::string enemyLocation = "rounds/";
         std::string pathSpriteLocation = spriteLocation; 
         std::string pathFileLocation = pathLocation; 
         std::string enemyFileLocation = enemyLocation;
-        int frame_count = TILE_SIZE * FRAME_SHIFT;
+        int frame_count = TILE_SIZE;
         std::vector<char> directions;
         std::vector<std::shared_ptr<NewSprite>> path;
         std::vector<std::shared_ptr<Enemy>> roundEnemies;
         std::vector<int> correspondingTile;
     public:
-        Stage(std::string, std::string, std::string);
+        Stage(std::string, std::string, std::string, int);
         void driver(std::shared_ptr<sf::RenderWindow>) override;
         void constructPath();
         void constructRound();

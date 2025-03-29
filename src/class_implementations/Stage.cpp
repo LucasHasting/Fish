@@ -11,14 +11,19 @@
 #include "../class_headers/NewSprite.h"
 #include "../class_headers/Enemy.h"
 #include "../class_headers/GameConstants.h"
+#include "../class_headers/GameStates.h"
 
 using namespace sf;
 
-Stage::Stage(std::string pathSpriteLocation, std::string pathFileLocation, std::string enemyFileLocation){
+Stage::Stage(std::string pathSpriteLocation, std::string pathFileLocation, std::string stageName, int maxRounds){
+    //default to tower menu
+    stageState = TOWER;
+    
     //set the files for the stage
     this->pathSpriteLocation += pathSpriteLocation;
     this->pathFileLocation += pathFileLocation;
-    this->enemyFileLocation += enemyFileLocation;
+    this->enemyFileLocation += stageName + "/Enemy1.txt";
+    this->maxRounds = 1;
     
     //construct the path
     constructPath();
@@ -28,20 +33,35 @@ Stage::Stage(std::string pathSpriteLocation, std::string pathFileLocation, std::
 }
 
 void Stage::driver(std::shared_ptr<sf::RenderWindow> window) {
-    //draw the path to the screen
-    drawPath(window);
 
-    //draw enemies to the screen
-    drawEnemies(window);
 
-    //display the screen
-    window->display();
+    switch(stageState){
+        case ROUND:
+            //draw the path to the screen
+            drawPath(window);
+            
+            //draw enemies to the screen
+            drawEnemies(window);
 
-    //update enemy location
-    moveEnemies();
+            //display the screen
+            window->display();
 
-    //decrement frame count (mod 32)
-    frame_count--;
+            //update enemy location
+            moveEnemies();
+
+            //decrement frame count (mod 32)
+            frame_count--;
+            break;
+        case TOWER:
+            //change frame count for later - low cost overall, will stay
+            frame_count = TILE_SIZE;
+
+            //draw the path to the screen
+            drawPath(window);
+
+            //display the screen
+            window->display();
+    }
 }
 
 void Stage::constructPath() {
@@ -183,14 +203,15 @@ void Stage::moveEnemies(){
         for(long unsigned int i = 0; i < roundEnemies.size(); ++i){
             correspondingTile[i] += 1;
         }
-        frame_count = TILE_SIZE * FRAME_SHIFT;
+        frame_count = TILE_SIZE;
     }
 
-    //std::cout << direction[correspondingTile[0]] << std::endl;
-
     for(long unsigned int i = 0; i < roundEnemies.size(); ++i){
-        if((long unsigned int)correspondingTile[i] == directions.size() - 1)
+        //sprite has reached the end
+        if((long unsigned int)correspondingTile[i] == directions.size() - 1){
+            roundEnemies[i]->sprite->setColor(Color::Transparent); 
             continue;
+        }
 
         //get the enemy location
         Vector2f currentEnemyPos = roundEnemies[i]->sprite->getPosition();
