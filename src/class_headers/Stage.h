@@ -17,7 +17,9 @@ class Stage : public Screen{
     private:
         enum StageStates stageState;
         int maxRounds = 0;
+        bool needsConstruction = true;
         std::shared_ptr<NewSprite> pathSprite = nullptr;
+        std::shared_ptr<NewSprite> button = nullptr;
         std::string pathLocation = "paths/";
         std::string enemyLocation = "rounds/";
         std::string pathSpriteLocation = spriteLocation; 
@@ -38,6 +40,7 @@ class Stage : public Screen{
         void drawEnemies(std::shared_ptr<sf::RenderWindow>);
         std::string getEnemyType(char);
         void moveEnemies();
+        bool isButtonClicked(std::shared_ptr<sf::RenderWindow>);
 };
 
 #endif

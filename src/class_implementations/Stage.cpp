@@ -24,17 +24,18 @@ Stage::Stage(std::string pathSpriteLocation, std::string pathFileLocation, std::
     this->pathFileLocation += pathFileLocation;
     this->enemyFileLocation += stageName + "/Enemy1.txt";
     this->maxRounds = 1;
+
+    //create the button for the rounds
+    button = std::make_shared<NewSprite>(spriteLocation + "button.png");
+
+    //place button in bottom corner
+    //button->sprite->setPosition((WIDTH/2) - (TILE_SIZE/2), -((HEIGHT/2) - (TILE_SIZE/2)));
     
     //construct the path
     constructPath();
-
-    //construct enemies
-    constructRound();
 }
 
 void Stage::driver(std::shared_ptr<sf::RenderWindow> window) {
-
-
     switch(stageState){
         case ROUND:
             //draw the path to the screen
@@ -59,8 +60,19 @@ void Stage::driver(std::shared_ptr<sf::RenderWindow> window) {
             //draw the path to the screen
             drawPath(window);
 
+            //draw the button for the next round
+            window->draw(*(button->sprite));
+
             //display the screen
             window->display();
+
+            //check if the button has been clicked
+            if(isButtonClicked(window)){
+                //construct the next round and start the round
+                roundEnemies.clear();
+                constructRound();
+                stageState = ROUND;
+            }
     }
 }
 
@@ -199,6 +211,13 @@ void Stage::drawEnemies(std::shared_ptr<sf::RenderWindow> window) {
 }
 
 void Stage::moveEnemies(){
+    std::cout << correspondingTile[(int) correspondingTile.size() - 1] << "\t" << directions.size() << std::endl;
+    
+    if(correspondingTile[(int) correspondingTile.size() - 1] >= (int) directions.size() - 1){
+        stageState = TOWER;
+        return;
+    }
+
     if(frame_count == 0){
         for(long unsigned int i = 0; i < roundEnemies.size(); ++i){
             correspondingTile[i] += 1;
@@ -226,4 +245,15 @@ void Stage::moveEnemies(){
         //set the position
         roundEnemies[i]->sprite->setPosition(currentEnemyPos);
     }
+}
+
+bool Stage::isButtonClicked(std::shared_ptr<sf::RenderWindow> window){
+    if(Mouse::isButtonPressed(Mouse::Left)){
+        Vector2f mouse = window->mapPixelToCoords(Mouse::getPosition(*window));
+
+        FloatRect bounds = button->sprite->getGlobalBounds();
+
+        return (bounds.contains(mouse));
+    }
+    return false;
 }
