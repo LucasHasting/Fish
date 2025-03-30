@@ -11,8 +11,8 @@ const   int     ASCII_SHIFT         = -48;
 const   char    TITLE[5]            = "Fish";                   //char array is 1 more to account for null byte
 
 //positions
-const   float   FIRST_TILE_CENTER_X = -304.f;
-const   float   FIRST_TILE_CENTER_Y = -224.f;
-const   float   CENTER_X            = 0.f;
-const   float   CENTER_Y            = 0.f;
+const   float   FIRST_TILE_CENTER_X = 0.0f;
+const   float   FIRST_TILE_CENTER_Y = 0.0f;
+const   float   CENTER_X            = WIDTH/2;
+const   float   CENTER_Y            = HEIGHT/2;
 #endif

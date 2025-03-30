@@ -30,15 +30,15 @@ Stage::Stage(std::string pathSpriteLocation, std::string pathFileLocation, std::
     button = std::make_shared<NewSprite>(spriteLocation + "button.png");
 
     //place button in bottom corner
-    button->sprite->setPosition(WIDTH/3,(HEIGHT/3)+32);
+    button->sprite->setPosition(WIDTH/4,(HEIGHT/3)+TILE_SIZE);
     
     //construct the path
     constructPath();
 }
 
 void Stage::driver(std::shared_ptr<sf::RenderWindow> window) {
-    //Vector2i mpos = Mouse::getPosition(*window); 
-    //std::cout << mpos.x << "\t" << mpos.y << std::endl;
+    Vector2i mpos = Mouse::getPosition(*window); 
+    std::cout << mpos.x << "\t" << mpos.y << std::endl;
 
     switch(stageState){
         case ROUND:
@@ -199,6 +199,8 @@ std::string Stage::getEnemyType(char type){
     switch(type){
         case 'r':
             return "red_square.png";
+        case 'b':
+            return "blue_square.png";
         default:
             return "none";
     }
