@@ -66,6 +66,6 @@ void Game::constructStages(){
         "square.png", //path sprite for stage 1
         "Stage1.txt", //the file containing the path itself
         "Stage1",     //the name of the stage (folder used for rounds)
-        1             //max rounds for the stage
+        2             //max rounds for the stage
     ));
 }

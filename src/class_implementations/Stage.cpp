@@ -22,20 +22,24 @@ Stage::Stage(std::string pathSpriteLocation, std::string pathFileLocation, std::
     //set the files for the stage
     this->pathSpriteLocation += pathSpriteLocation;
     this->pathFileLocation += pathFileLocation;
-    this->enemyFileLocation += stageName + "/Enemy1.txt";
-    this->maxRounds = 1;
+    this->enemyFileLocation += stageName + "/round#.txt";
+    this->maxRounds = maxRounds;
+    this->currentRound = 1; //start at the first round
 
     //create the button for the rounds
     button = std::make_shared<NewSprite>(spriteLocation + "button.png");
 
     //place button in bottom corner
-    //button->sprite->setPosition((WIDTH/2) - (TILE_SIZE/2), -((HEIGHT/2) - (TILE_SIZE/2)));
+    button->sprite->setPosition(WIDTH/3,(HEIGHT/3)+32);
     
     //construct the path
     constructPath();
 }
 
 void Stage::driver(std::shared_ptr<sf::RenderWindow> window) {
+    //Vector2i mpos = Mouse::getPosition(*window); 
+    //std::cout << mpos.x << "\t" << mpos.y << std::endl;
+
     switch(stageState){
         case ROUND:
             //draw the path to the screen
@@ -54,6 +58,11 @@ void Stage::driver(std::shared_ptr<sf::RenderWindow> window) {
             frame_count--;
             break;
         case TOWER:
+            if(currentRound > maxRounds){
+                stageState = FINISHED;
+                break;
+            }
+
             //change frame count for later - low cost overall, will stay
             frame_count = TILE_SIZE;
 
@@ -68,11 +77,20 @@ void Stage::driver(std::shared_ptr<sf::RenderWindow> window) {
 
             //check if the button has been clicked
             if(isButtonClicked(window)){
-                //construct the next round and start the round
+                //reset enemy round vectors
                 roundEnemies.clear();
-                constructRound();
+                correspondingTile.clear();
+
+                //construct the round and start the round
+                constructRound(currentRound);
+                currentRound++;
                 stageState = ROUND;
             }
+        case FINISHED:
+            
+            //display the window
+            window->display();
+            break;
     }
 }
 
@@ -121,7 +139,13 @@ void Stage::constructPath() {
     }
 }
 
-void Stage::constructRound(){
+void Stage::constructRound(int round){
+    //convert round to char
+    char roundChar = round - ASCII_SHIFT;
+
+    //change round file
+    enemyFileLocation[enemyFileLocation.size()-5] = roundChar;
+
     //create input file stream
     std::ifstream enemyFile(enemyFileLocation);
     
@@ -154,7 +178,7 @@ void Stage::constructRound(){
     int initial = 0;
 
     //set all sprites in the path
-    for(long unsigned int i = 1; i < enemy_count.size(); ++i){
+    for(long unsigned int i = 0; i < enemy_count.size(); ++i){
         for(int j = 0; j < enemy_count[i]; ++j){
             //get enemy type
             std::string location_of_enemy = getEnemyType(enemy_type[i]);
@@ -211,7 +235,7 @@ void Stage::drawEnemies(std::shared_ptr<sf::RenderWindow> window) {
 }
 
 void Stage::moveEnemies(){
-    std::cout << correspondingTile[(int) correspondingTile.size() - 1] << "\t" << directions.size() << std::endl;
+    //std::cout << correspondingTile[(int) correspondingTile.size() - 1] << "\t" << directions.size() << std::endl;
     
     if(correspondingTile[(int) correspondingTile.size() - 1] >= (int) directions.size() - 1){
         stageState = TOWER;

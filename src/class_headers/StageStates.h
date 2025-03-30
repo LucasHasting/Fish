@@ -3,7 +3,8 @@
 
 enum StageStates {
     ROUND,
-    TOWER
+    TOWER,
+    FINISHED
 };
 
 #endif

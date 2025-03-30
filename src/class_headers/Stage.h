@@ -17,6 +17,7 @@ class Stage : public Screen{
     private:
         enum StageStates stageState;
         int maxRounds = 0;
+        int currentRound = 0;
         bool needsConstruction = true;
         std::shared_ptr<NewSprite> pathSprite = nullptr;
         std::shared_ptr<NewSprite> button = nullptr;
@@ -34,7 +35,7 @@ class Stage : public Screen{
         Stage(std::string, std::string, std::string, int);
         void driver(std::shared_ptr<sf::RenderWindow>) override;
         void constructPath();
-        void constructRound();
+        void constructRound(int);
         Vector2f calculate_position(Vector2f, char, int, int);
         void drawPath(std::shared_ptr<sf::RenderWindow>);
         void drawEnemies(std::shared_ptr<sf::RenderWindow>);
