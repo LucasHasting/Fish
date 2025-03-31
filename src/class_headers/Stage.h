@@ -31,6 +31,8 @@ class Stage : public Screen{
         std::vector<std::shared_ptr<NewSprite>> path;
         std::vector<std::shared_ptr<Enemy>> roundEnemies;
         std::vector<int> correspondingTile;
+        Font endFont;
+        Font roundFont;
     public:
         Stage(std::string, std::string, std::string, int);
         void driver(std::shared_ptr<sf::RenderWindow>) override;

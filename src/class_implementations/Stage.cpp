@@ -26,11 +26,20 @@ Stage::Stage(std::string pathSpriteLocation, std::string pathFileLocation, std::
     this->maxRounds = maxRounds;
     this->currentRound = 1; //start at the first round
 
+    //set fonts
+    if(!endFont.loadFromFile("fonts/SuperLobster.ttf")){
+        exit(1);
+    }
+    
+    if(!roundFont.loadFromFile("fonts/SpringRainstorm.ttf")){
+        exit(1);
+    }
+
     //create the button for the rounds
     button = std::make_shared<NewSprite>(spriteLocation + "button.png");
 
     //place button in bottom corner
-    button->sprite->setPosition(TILE_SIZE, HEIGHT - TILE_SIZE);
+    button->sprite->setPosition(TILE_SIZE, HEIGHT-TILE_SIZE);
     
     //construct the path
     constructPath();
@@ -39,9 +48,28 @@ Stage::Stage(std::string pathSpriteLocation, std::string pathFileLocation, std::
 void Stage::driver(std::shared_ptr<sf::RenderWindow> window) {
     //Vector2i mpos = Mouse::getPosition(*window); 
     //std::cout << mpos.x << "\t" << mpos.y << std::endl;
+    
+    //prepare round text
+    std::string roundString = "round #/#";
+    char currentRoundChar = currentRound - ASCII_SHIFT - 1;
+    char maxRoundsChar = maxRounds - ASCII_SHIFT;
+    roundString[roundString.size()-1] = maxRoundsChar;
+    roundString[roundString.size()-3] = currentRoundChar;
+    
+    //create round text and set it
+    Text roundText;
+    roundText.setFont(roundFont);
+    roundText.setString(roundString);
+    roundText.setCharacterSize(20);
+    roundText.setFillColor(Color::White);
+    roundText.setPosition(TILE_SIZE, 0.0f);
+
 
     switch(stageState){
         case ROUND:
+            //draw the round text
+            window->draw(roundText);
+            
             //draw the path to the screen
             drawPath(window);
             
@@ -62,6 +90,9 @@ void Stage::driver(std::shared_ptr<sf::RenderWindow> window) {
                 stageState = FINISHED;
                 break;
             }
+            
+            //draw the round text
+            window->draw(roundText);
 
             //change frame count for later - low cost overall, will stay
             frame_count = TILE_SIZE;
@@ -86,7 +117,16 @@ void Stage::driver(std::shared_ptr<sf::RenderWindow> window) {
                 currentRound++;
                 stageState = ROUND;
             }
+            break;
         case FINISHED:
+            //finished text
+            Text endText;
+            endText.setFont(endFont);
+            endText.setString("FINISHED");
+            endText.setCharacterSize(64);
+            endText.setFillColor(Color::White);
+            endText.setPosition(CENTER_X, CENTER_Y);
+            window->draw(endText);
             
             //display the window
             window->display();
