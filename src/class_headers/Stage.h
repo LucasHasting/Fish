@@ -33,17 +33,17 @@ class Stage : public Screen{
         std::vector<int> correspondingTile;
         Font endFont;
         Font roundFont;
-    public:
-        Stage(std::string, std::string, std::string, int);
-        void driver(std::shared_ptr<sf::RenderWindow>) override;
+        bool isButtonClicked(std::shared_ptr<sf::RenderWindow>);
+        void moveEnemies();
         void constructPath();
         void constructRound(int);
         Vector2f calculate_position(Vector2f, char, int, int);
         void drawPath(std::shared_ptr<sf::RenderWindow>);
         void drawEnemies(std::shared_ptr<sf::RenderWindow>);
         std::string getEnemyType(char);
-        void moveEnemies();
-        bool isButtonClicked(std::shared_ptr<sf::RenderWindow>);
+    public:
+        Stage(std::string, std::string, std::string, int);
+        void driver(std::shared_ptr<sf::RenderWindow>) override;
 };
 
 #endif
