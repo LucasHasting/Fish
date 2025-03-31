@@ -30,15 +30,15 @@ Stage::Stage(std::string pathSpriteLocation, std::string pathFileLocation, std::
     button = std::make_shared<NewSprite>(spriteLocation + "button.png");
 
     //place button in bottom corner
-    button->sprite->setPosition(WIDTH/4,(HEIGHT/3)+TILE_SIZE);
+    button->sprite->setPosition(TILE_SIZE, HEIGHT - TILE_SIZE);
     
     //construct the path
     constructPath();
 }
 
 void Stage::driver(std::shared_ptr<sf::RenderWindow> window) {
-    Vector2i mpos = Mouse::getPosition(*window); 
-    std::cout << mpos.x << "\t" << mpos.y << std::endl;
+    //Vector2i mpos = Mouse::getPosition(*window); 
+    //std::cout << mpos.x << "\t" << mpos.y << std::endl;
 
     switch(stageState){
         case ROUND:
@@ -126,17 +126,21 @@ void Stage::constructPath() {
     //set all sprites in the path
     for(long unsigned int i = 1; i < sprite_count.size(); ++i){
         for(int j = 0; j < sprite_count[i]; ++j){
-            //set position of sprite
+            //allocate sprite
             path.push_back(std::make_shared<NewSprite>(pathSpriteLocation));
-            path[path.size()-1]->sprite->setPosition(initial_position);
 
             //update position
             initial_position = calculate_position(initial_position, direction[i], 1, TILE_SIZE);
 
+            //set position
+            path[path.size()-1]->sprite->setPosition(initial_position);
+            
             //save the direction of the sprite into a vector
             directions.push_back(direction[i]);
         }
     }
+
+    std::cout << directions.size() << std::endl;
 }
 
 void Stage::constructRound(int round){
@@ -175,7 +179,8 @@ void Stage::constructRound(int round){
     
     //get initial pos for the enemies
     Vector2f currentEnemyPos = path[0]->sprite->getPosition();
-    int initial = 0;
+    currentEnemyPos.x -= TILE_SIZE;
+    int initial = -1;
 
     //set all sprites in the path
     for(long unsigned int i = 0; i < enemy_count.size(); ++i){
@@ -262,10 +267,10 @@ void Stage::moveEnemies(){
         Vector2f currentEnemyPos = roundEnemies[i]->sprite->getPosition();
         
         //update position
-        if(correspondingTile[i] < 0){
+        if(correspondingTile[i] <= 0){
             currentEnemyPos.x += 1;
         } else {
-            currentEnemyPos = calculate_position(currentEnemyPos, directions[correspondingTile[i]], 1, 1);
+            currentEnemyPos = calculate_position(currentEnemyPos, directions[correspondingTile[i]+1], 1, 1);
         }
 
         //set the position

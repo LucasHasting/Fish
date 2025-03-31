@@ -13,6 +13,6 @@ const   char    TITLE[5]            = "Fish";                   //char array is 
 //positions
 const   float   FIRST_TILE_CENTER_X = 0.0f;
 const   float   FIRST_TILE_CENTER_Y = 0.0f;
-const   float   CENTER_X            = WIDTH/2;
+const   float   CENTER_X            = WIDTH/2 - (TILE_SIZE * 1.5);
 const   float   CENTER_Y            = HEIGHT/2;
 #endif
