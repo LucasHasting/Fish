@@ -1,5 +1,5 @@
-#ifndef STAGE_H
-#define STAGE_H
+#ifndef SCREEN_H
+#define SCREEN_H
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <memory>
