@@ -12,22 +12,29 @@
  
 StageMenu::StageMenu(){
     //create the buttons
-    stageButton = std::make_shared<NewSprite>(spriteLocation + "oneButton.png");
+    stageOneButton = std::make_shared<NewSprite>(spriteLocation + "oneButton.png");
+    stageTwoButton = std::make_shared<NewSprite>(spriteLocation + "twoButton.png");
 
     //place the buttons
-    stageButton->sprite->setPosition(CENTER_X-(TILE_SIZE/2), CENTER_Y-(TILE_SIZE/2) - TILE_SIZE*4);
+    stageOneButton->sprite->setPosition(CENTER_X-(TILE_SIZE/2), CENTER_Y-(TILE_SIZE/2) - TILE_SIZE*4);
+    stageTwoButton->sprite->setPosition(CENTER_X-(TILE_SIZE/2), CENTER_Y-(TILE_SIZE/2) - TILE_SIZE*2);
 }
 
 void StageMenu::driver(std::shared_ptr<sf::RenderWindow> window){
     this->window = window;
 
     //draw and buttons
-    window->draw(*(stageButton->sprite));
+    window->draw(*(stageOneButton->sprite));
+    window->draw(*(stageTwoButton->sprite));
 
     window->display();
 
     //if the stage button has been clicked, go to stage menu
-    if(isClicked(stageButton)){
+    if(isClicked(stageOneButton)){
         *gs = STAGE_1;        
+    }
+    
+    if(isClicked(stageTwoButton)){
+        *gs = STAGE_2;        
     }
 }

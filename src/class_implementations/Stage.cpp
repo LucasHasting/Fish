@@ -20,6 +20,7 @@ void Stage::reset(){
     money = STARTING_AMOUNT;
     
     placedTowers.clear();
+    placedTowerRadius.clear();
 
     //default to tower menu
     stageState = TOWER;

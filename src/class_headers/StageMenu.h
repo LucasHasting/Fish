@@ -12,7 +12,8 @@ using namespace sf;
 
 class StageMenu : public Screen{
     private:
-        std::shared_ptr<NewSprite> stageButton = nullptr;
+        std::shared_ptr<NewSprite> stageOneButton = nullptr;
+        std::shared_ptr<NewSprite> stageTwoButton = nullptr;
     public:
         StageMenu();
         void driver(std::shared_ptr<sf::RenderWindow>) override;

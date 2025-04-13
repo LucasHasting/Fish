@@ -62,6 +62,10 @@ void Game::playMusic(){
             musicPlaying[0] = false;
             playFile("music/Stage1.wav", 1);
             break;    
+        case STAGE_2:
+            musicPlaying[0] = false;
+            playFile("music/Stage2.wav", 2);
+            break;
     }
 }
 
@@ -101,6 +105,9 @@ void Game::gameDriver(){
         case STAGE_1:
             stages[0]->driver(window);
             break;
+        case STAGE_2:
+            stages[1]->driver(window);
+            break;
     }
 }
 
@@ -111,6 +118,14 @@ void Game::constructStages(){
         2,            //max rounds for the stage
         "newBackground.png"
     ));
+
+    stages.push_back(std::make_shared<Stage>(
+        "Stage2",
+        2,
+        "lavaBackgroundNew.png"
+    ));
     
-    stages[0]->setGameState(&gameState);
+    for(unsigned long int i = 0; i < stages.size(); ++i){
+        stages[i]->setGameState(&gameState);
+    }
 }
