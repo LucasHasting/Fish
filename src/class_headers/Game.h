@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio/Music.hpp>
 
 #include "Stage.h"
 #include "MainMenu.h"
@@ -19,6 +20,10 @@ class Game {
         std::shared_ptr<StageMenu> sm;
         std::shared_ptr<View> camera = nullptr;
         std::shared_ptr<RenderWindow> window = nullptr;
+        std::shared_ptr<Music> currentMusic = nullptr;
+        void playFile(std::string, int);
+        bool musicPlaying[3] = {false, false, false};
+        void playMusic();
         void gameDriver();
         void constructStages();
     public:

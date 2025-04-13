@@ -12,7 +12,7 @@
  
 StageMenu::StageMenu(){
     //create the buttons
-    stageButton = std::make_shared<NewSprite>(spriteLocation + "button.png");
+    stageButton = std::make_shared<NewSprite>(spriteLocation + "oneButton.png");
 
     //place the buttons
     stageButton->sprite->setPosition(CENTER_X-(TILE_SIZE/2), CENTER_Y-(TILE_SIZE/2) - TILE_SIZE*4);

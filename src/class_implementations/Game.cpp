@@ -6,6 +6,7 @@
 #include "../class_headers/GameConstants.h"
 #include "../class_headers/GameStates.h"
 #include <iostream>
+#include <SFML/Audio/Music.hpp>
 
 using namespace sf;
 
@@ -35,6 +36,35 @@ Game::Game(){
     window->setView(*camera);
 }
 
+
+void Game::playFile(std::string songFile, int musicIndex){
+    if(!musicPlaying[musicIndex]){
+          if(currentMusic != nullptr){
+              currentMusic->stop();
+          }
+          currentMusic = std::make_shared<Music>();
+          currentMusic->openFromFile(songFile);
+          currentMusic->play();
+          currentMusic->setLoop(true);
+          musicPlaying[musicIndex] = true;
+     }
+}
+
+void Game::playMusic(){
+    switch(gameState){
+        case MAIN_MENU:
+        case STAGE_MENU:
+            musicPlaying[1] = false;
+            musicPlaying[2] = false;
+            playFile("music/menuMusic.wav", 0);
+            break;
+        case STAGE_1:
+            musicPlaying[0] = false;
+            playFile("music/Stage1.wav", 1);
+            break;    
+    }
+}
+
 void Game::driverShell(){
     while (window->isOpen())
     {
@@ -59,6 +89,7 @@ void Game::driverShell(){
 }
 
 void Game::gameDriver(){
+    playMusic();
     //use the current state's driver function
     switch(gameState){
         case MAIN_MENU:
@@ -76,10 +107,9 @@ void Game::gameDriver(){
 void Game::constructStages(){
     //Stage 1 - example descriptions for future stages
     stages.push_back(std::make_shared<Stage>(
-        "square.png", //path sprite for stage 1
-        "Stage1.txt", //the file containing the path itself
         "Stage1",     //the name of the stage (folder used for rounds)
-        2             //max rounds for the stage
+        2,            //max rounds for the stage
+        "newBackground.png"
     ));
     
     stages[0]->setGameState(&gameState);

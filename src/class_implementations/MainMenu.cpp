@@ -11,8 +11,8 @@
  
 MainMenu::MainMenu(){
     //create the buttons
-    stageButton = std::make_shared<NewSprite>(spriteLocation + "button.png");
-    quitButton = std::make_shared<NewSprite>(spriteLocation + "button.png");
+    stageButton = std::make_shared<NewSprite>(spriteLocation + "menuButton.png");
+    quitButton = std::make_shared<NewSprite>(spriteLocation + "quitButton.png");
 
     //place the buttons
     stageButton->sprite->setPosition(CENTER_X-(TILE_SIZE/2), CENTER_Y-(TILE_SIZE/2));

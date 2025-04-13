@@ -31,14 +31,15 @@ void Stage::reset(){
     finishedButton->sprite->setPosition(-1000.f, -1000.f);
 }
 
-Stage::Stage(std::string pathSpriteLocation, std::string pathFileLocation, std::string stageName, int maxRounds){
+Stage::Stage(std::string stageName, int maxRounds, std::string backgroundSpriteLocation){
     //default to tower menu
     stageState = TOWER;
     
     //set the files for the stage
-    this->pathSpriteLocation += pathSpriteLocation;
-    this->pathFileLocation += pathFileLocation;
+    this->pathSpriteLocation += "square.png";
+    this->pathFileLocation += stageName + ".txt";
     this->enemyFileLocation += stageName + "/round#.txt";
+    this->backgroundSpriteLocation += backgroundSpriteLocation;
     this->maxRounds = maxRounds;
     this->currentRound = 1; //start at the first round
 
@@ -53,7 +54,7 @@ Stage::Stage(std::string pathSpriteLocation, std::string pathFileLocation, std::
 
     //create the buttons
     button = std::make_shared<NewSprite>(spriteLocation + "button.png");
-    finishedButton = std::make_shared<NewSprite>(spriteLocation + "button.png");
+    finishedButton = std::make_shared<NewSprite>(spriteLocation + "menuButton.png");
 
     //place the round button in bottom corner
     button->sprite->setPosition(TILE_SIZE, HEIGHT-TILE_SIZE);
@@ -61,6 +62,10 @@ Stage::Stage(std::string pathSpriteLocation, std::string pathFileLocation, std::
     //place the finished button off screen
     finishedButton->sprite->setPosition(-1000.f, -1000.f);
     
+    //create the background
+    background = std::make_shared<NewSprite>(this->backgroundSpriteLocation);
+    background->sprite->setPosition(CENTER_X - (WIDTH/2), CENTER_Y - (HEIGHT/2));
+
     //construct the path
     constructPath();
 
@@ -77,24 +82,26 @@ void Stage::constructTowers(){
     stageTowers[stageTowers.size() - 1]->sprite->setPosition(WIDTH-224, TILE_SIZE*1.5);
     stageTowers[stageTowers.size() - 1]->sprite->setScale(0.5f, 0.5f);
     
-    for(long unsigned int i = 0; i < stageTowers.size(); ++i){
+    stageTowers.push_back(std::make_shared<Tower>(spriteLocation + "cat3.png", 3, 3));
+    stageTowers[stageTowers.size() - 1]->sprite->setPosition(WIDTH-224, TILE_SIZE * 3);
+    stageTowers[stageTowers.size() - 1]->sprite->setScale(0.5f, 0.5f);
+
+    double j = 0;
+    for(long unsigned int i = 0; i < stageTowers.size(); ++i, j+=1.5){
         std::string towerCostString = "FP: " + std::to_string(stageTowers[i]->getCost());    
         towerCostText.push_back(std::make_shared<Text>());
         towerCostText[i]->setFont(stageFont);
         towerCostText[i]->setString(towerCostString);
         towerCostText[i]->setCharacterSize(20);
         towerCostText[i]->setFillColor(Color::White);
-
-        if(i != 0)
-            towerCostText[i]->setPosition(WIDTH-176, TILE_SIZE * (i + 0.5));
-        else
-            towerCostText[i]->setPosition(WIDTH-176, 0.0f);
+        towerCostText[i]->setPosition(WIDTH-176, TILE_SIZE * j);
     }
 }
 
 
 void Stage::driver(std::shared_ptr<sf::RenderWindow> window) {
     this->window = window;
+    window->draw(*(background->sprite));
 
     //Vector2i mpos = Mouse::getPosition(*window); 
     //std::cout << mpos.x << "\t" << mpos.y << std::endl;
@@ -257,7 +264,7 @@ void Stage::roundDriver(){
         window->draw(moneyText);
             
         //draw the path to the screen
-        drawMultipleSprites(path);
+        //drawMultipleSprites(path);
 
         //draw the towers
         drawMultipleSprites(placedTowers);
@@ -392,11 +399,8 @@ void Stage::constructRound(int round){
     //set all sprites in the path
     for(long unsigned int i = 0; i < enemy_count.size(); ++i){
         for(int j = 0; j < enemy_count[i]; ++j){
-            //get enemy type
-            std::string location_of_enemy = getEnemyType(enemy_type[i]);
-
             //set position of enemy
-            roundEnemies.push_back(std::make_shared<Enemy>(spriteLocation + location_of_enemy, 10, 10));
+            roundEnemies.push_back(getEnemyType(enemy_type[i]));
             roundEnemies[roundEnemies.size()-1]->sprite->setPosition(currentEnemyPos);
             correspondingTile.push_back(initial);
             initial--;
@@ -410,14 +414,20 @@ void Stage::constructRound(int round){
     }
 }
 
-std::string Stage::getEnemyType(char type){
+std::shared_ptr<Enemy> Stage::getEnemyType(char type){
     switch(type){
         case 'r':
-            return "red_square.png";
+            return std::make_shared<Enemy>(spriteLocation + "redFish.png", 10);
         case 'b':
-            return "blue_square.png";
+            return std::make_shared<Enemy>(spriteLocation + "bossFish.png", 100);
+        case 'g':
+            return std::make_shared<Enemy>(spriteLocation + "greenFish.png", 20);
+        case 'o':
+            return std::make_shared<Enemy>(spriteLocation + "orangeFish.png", 30);
+        case 'p':
+            return std::make_shared<Enemy>(spriteLocation + "purpleFish.png", 40);
         default:
-            return "none";
+            return nullptr;
     }
 }
 

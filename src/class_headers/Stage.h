@@ -28,9 +28,11 @@ class Stage : public Screen{
         std::shared_ptr<NewSprite> button = nullptr;
         std::shared_ptr<NewSprite> finishedButton = nullptr;
         std::shared_ptr<NewSprite> pathSprite = nullptr;
+        std::shared_ptr<NewSprite> background = nullptr;
         std::string pathLocation = "paths/";
         std::string enemyLocation = "rounds/";
         std::string pathSpriteLocation = spriteLocation; 
+        std::string backgroundSpriteLocation = spriteLocation; 
         std::string pathFileLocation = pathLocation; 
         std::string enemyFileLocation = enemyLocation;
         std::vector<char> directions;
@@ -48,7 +50,7 @@ class Stage : public Screen{
         Text healthText;
         Text moneyText;
         Vector2f originalPos;
-        std::string getEnemyType(char);
+        std::shared_ptr<Enemy> getEnemyType(char);
         void reset();
         void moveEnemies();
         void constructPath();
@@ -66,7 +68,7 @@ class Stage : public Screen{
         template <typename T, typename U>
         bool isCollided(std::shared_ptr<T> sprite1, std::shared_ptr<U> sprite2);
     public:
-        Stage(std::string, std::string, std::string, int);
+        Stage(std::string, int, std::string);
         void driver(std::shared_ptr<sf::RenderWindow>) override;
 };
 
