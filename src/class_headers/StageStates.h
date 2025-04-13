@@ -4,7 +4,8 @@
 enum StageStates {
     ROUND,
     TOWER,
-    FINISHED
+    WIN,
+    LOOSE
 };
 
 #endif

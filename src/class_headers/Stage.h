@@ -25,8 +25,9 @@ class Stage : public Screen{
         int frame_count = TILE_SIZE;
         int health = MAX_HEALTH;
         int money = STARTING_AMOUNT;
-        std::shared_ptr<NewSprite> pathSprite = nullptr;
         std::shared_ptr<NewSprite> button = nullptr;
+        std::shared_ptr<NewSprite> finishedButton = nullptr;
+        std::shared_ptr<NewSprite> pathSprite = nullptr;
         std::string pathLocation = "paths/";
         std::string enemyLocation = "rounds/";
         std::string pathSpriteLocation = spriteLocation; 
@@ -41,7 +42,6 @@ class Stage : public Screen{
         std::vector<int> correspondingTile;
         std::vector<std::shared_ptr<Text>> towerCostText;
         std::vector<bool> isDead;
-        std::shared_ptr<sf::RenderWindow> window;
         Font endFont;
         Font stageFont;
         Text roundText;
@@ -49,21 +49,19 @@ class Stage : public Screen{
         Text moneyText;
         Vector2f originalPos;
         std::string getEnemyType(char);
+        void reset();
         void moveEnemies();
         void constructPath();
         void constructTowers();
         void constructRound(int);
         void towerDriver();
         void roundDriver();
-        void finishedDriver();
+        void finishedDriver(std::string);
         void hoverTower();
         Vector2f calculate_position(Vector2f, char, int, int);
         
         template <typename T>
         void drawMultipleSprites(std::vector<std::shared_ptr<T>>);
-
-        template <typename T>
-        bool isClicked(std::shared_ptr<T>);
 
         template <typename T, typename U>
         bool isCollided(std::shared_ptr<T> sprite1, std::shared_ptr<U> sprite2);

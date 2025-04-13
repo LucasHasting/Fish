@@ -3,6 +3,7 @@
 
 enum GameStates {
     MAIN_MENU,
+    STAGE_MENU,
     STAGE_1
 };
 

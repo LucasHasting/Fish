@@ -15,6 +15,22 @@
 
 using namespace sf;
 
+void Stage::reset(){
+    health = MAX_HEALTH;
+    money = STARTING_AMOUNT;
+    
+    placedTowers.clear();
+
+    //default to tower menu
+    stageState = TOWER;
+    
+    this->maxRounds = maxRounds;
+    this->currentRound = 1; //start at the first round
+    
+    //place the finished button off screen
+    finishedButton->sprite->setPosition(-1000.f, -1000.f);
+}
+
 Stage::Stage(std::string pathSpriteLocation, std::string pathFileLocation, std::string stageName, int maxRounds){
     //default to tower menu
     stageState = TOWER;
@@ -35,11 +51,15 @@ Stage::Stage(std::string pathSpriteLocation, std::string pathFileLocation, std::
         exit(1);
     }
 
-    //create the button for the rounds
+    //create the buttons
     button = std::make_shared<NewSprite>(spriteLocation + "button.png");
+    finishedButton = std::make_shared<NewSprite>(spriteLocation + "button.png");
 
-    //place button in bottom corner
+    //place the round button in bottom corner
     button->sprite->setPosition(TILE_SIZE, HEIGHT-TILE_SIZE);
+
+    //place the finished button off screen
+    finishedButton->sprite->setPosition(-1000.f, -1000.f);
     
     //construct the path
     constructPath();
@@ -49,11 +69,13 @@ Stage::Stage(std::string pathSpriteLocation, std::string pathFileLocation, std::
 }
 
 void Stage::constructTowers(){
-    stageTowers.push_back(std::make_shared<Tower>(spriteLocation + "red_square.png", 1, 1));
+    stageTowers.push_back(std::make_shared<Tower>(spriteLocation + "cat1.png", 1, 1));
     stageTowers[stageTowers.size() - 1]->sprite->setPosition(WIDTH-224, 0.0f);
+    stageTowers[stageTowers.size() - 1]->sprite->setScale(0.5f, 0.5f);
 
-    stageTowers.push_back(std::make_shared<Tower>(spriteLocation + "red_square.png", 2, 2));
+    stageTowers.push_back(std::make_shared<Tower>(spriteLocation + "cat2.png", 2, 2));
     stageTowers[stageTowers.size() - 1]->sprite->setPosition(WIDTH-224, TILE_SIZE*1.5);
+    stageTowers[stageTowers.size() - 1]->sprite->setScale(0.5f, 0.5f);
     
     for(long unsigned int i = 0; i < stageTowers.size(); ++i){
         std::string towerCostString = "FP: " + std::to_string(stageTowers[i]->getCost());    
@@ -69,6 +91,7 @@ void Stage::constructTowers(){
             towerCostText[i]->setPosition(WIDTH-176, 0.0f);
     }
 }
+
 
 void Stage::driver(std::shared_ptr<sf::RenderWindow> window) {
     this->window = window;
@@ -113,8 +136,11 @@ void Stage::driver(std::shared_ptr<sf::RenderWindow> window) {
         case TOWER:
             towerDriver();
             break;
-        case FINISHED:
-            finishedDriver();
+        case WIN:
+            finishedDriver("WIN");
+            break;
+        case LOOSE:
+            finishedDriver("LOOSE");
             break;
     }
 }
@@ -122,7 +148,7 @@ void Stage::driver(std::shared_ptr<sf::RenderWindow> window) {
 void Stage::towerDriver(){
         //decide if the game is finished
         if(currentRound > maxRounds){
-            stageState = FINISHED;
+            stageState = WIN;
             return;
         }
         
@@ -147,6 +173,7 @@ void Stage::towerDriver(){
         for(long unsigned int i = 0; i < towerCostText.size(); ++i){
             window->draw(*towerCostText[i]);
         }
+
         //display the screen
         window->display();
 
@@ -173,7 +200,7 @@ void Stage::towerDriver(){
             }
             
             //place the tower
-            if(!checkPath && isClicked(stageTowers[towerPos]) && frame_count <= 0){
+            if(!checkPath && Screen::isClicked(stageTowers[towerPos]) && frame_count <= 0){
                 frame_count = TILE_SIZE;
                 towerDrag = false;
                 
@@ -191,13 +218,14 @@ void Stage::towerDriver(){
                 placedTowerRadius.push_back(range);
 
                 //put copy of tower into stageTowers
-                stageTowers[towerPos] = std::make_shared<Tower>(spriteLocation + "red_square.png",stageTowers[towerPos]->getAttack(), stageTowers[towerPos]->getCost());
+                stageTowers[towerPos] = std::make_shared<Tower>(stageTowers[towerPos]->spriteName,stageTowers[towerPos]->getAttack(), stageTowers[towerPos]->getCost());
+                stageTowers[towerPos]->sprite->setScale(0.5f, 0.5f);
                 stageTowers[towerPos]->sprite->setPosition(originalPos);
             }
             frame_count--;
         }
         //check if the button has been clicked
-        else if(isClicked(button)){
+        else if(Screen::isClicked(button)){
             //reset enemy round vectors
             roundEnemies.clear();
             correspondingTile.clear();
@@ -212,7 +240,7 @@ void Stage::towerDriver(){
 
         //loop through towers and see if any have been clicked
         for(long unsigned int i = 0; !towerDrag && i < stageTowers.size(); ++i){
-            if(isClicked(stageTowers[i]) && stageTowers[i]->getCost() <= money){
+            if(Screen::isClicked(stageTowers[i]) && stageTowers[i]->getCost() <= money){
                 money -= stageTowers[i]->getCost();
                 towerDrag = true;
                 towerPos = i;
@@ -237,7 +265,7 @@ void Stage::roundDriver(){
         //tower radius
         hoverTower();           
  
-        //draw enemies to the screen
+        //draw enemies and attacks to the screen
         drawMultipleSprites(roundEnemies);
 
         //display the screen
@@ -250,16 +278,27 @@ void Stage::roundDriver(){
         frame_count--;
 }
 
-void Stage::finishedDriver(){
+void Stage::finishedDriver(std::string finishedText){
+        //place the finshed button
+        finishedButton->sprite->setPosition(CENTER_X-(TILE_SIZE/2), CENTER_Y-(TILE_SIZE/2) + TILE_SIZE * 4);
+    
         //finished text
         Text endText;
         endText.setFont(endFont);
-        endText.setString("FINISHED");
+        endText.setString(finishedText);
         endText.setCharacterSize(64);
         endText.setFillColor(Color::White);
         endText.setPosition(CENTER_X, CENTER_Y);
         window->draw(endText);
-            
+    
+        //draw the button
+        window->draw(*(finishedButton->sprite));
+
+        if(isClicked(finishedButton)){
+            *gs = MAIN_MENU;
+            reset();
+        }
+        
         //display the window
         window->display();
 }
@@ -411,7 +450,7 @@ void Stage::moveEnemies(){
     //std::cout << correspondingTile[(int) correspondingTile.size() - 1] << "\t" << directions.size() << std::endl;
 
     if(health <= 0){
-        stageState = FINISHED;
+        stageState = LOOSE;
         return;
     }
    
@@ -435,15 +474,19 @@ void Stage::moveEnemies(){
             //check if collides with radius
             for(long unsigned int j = 0; j < placedTowerRadius.size(); ++j){
                 if(isCollided(roundEnemies[i], placedTowerRadius[j])){
-                    roundEnemies[i]->setHealth(roundEnemies[i]->getHealth() - 1);
-                    //int total = roundEnemies[i]->getHealth();
-                    //int current = roundEnemies[i]->getInitialHealth();
-                    //roundEnemies[i]->sprite->setColor(Color(255,255,255,((current/total) - (total - current)/2)*255));
+                    //decrease health by attack
+                    roundEnemies[i]->setHealth(roundEnemies[i]->getHealth() - placedTowers[j]->getAttack());
+                    
+                    //set opacity based on health
+                    int total = roundEnemies[i]->getHealth();
+                    int current = roundEnemies[i]->getInitialHealth();
+                    int opacity = ((float) total/(2*current) + 0.5) * 255;
+                    roundEnemies[i]->sprite->setColor(Color(255,255,255,opacity));
                 }
             }
 
             //check if enemy is dead, increment money, check flag
-            if(!isDead[i] && roundEnemies[i]->getHealth() == 0){
+            if(!isDead[i] && roundEnemies[i]->getHealth() <= 0){
                 isDead[i] = true;
                 money++;
                 roundEnemies[i]->sprite->setColor(Color::Transparent); 
@@ -480,17 +523,6 @@ void Stage::moveEnemies(){
     }
 }
 
-template <typename T>
-bool Stage::isClicked(std::shared_ptr<T> sprite){
-    if(Mouse::isButtonPressed(Mouse::Left)){
-        Vector2f mouse = window->mapPixelToCoords(Mouse::getPosition(*window));
-
-        FloatRect bounds = sprite->sprite->getGlobalBounds();
-
-        return (bounds.contains(mouse));
-    }
-    return false;
-}
 
 template <typename T, typename U>
 bool Stage::isCollided(std::shared_ptr<T> sprite1, std::shared_ptr<U> sprite2){

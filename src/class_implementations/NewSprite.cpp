@@ -7,6 +7,8 @@
 using namespace sf;
 
 NewSprite::NewSprite(std::string spriteName){    
+    this->spriteName = spriteName;
+
     //Texture and Sprite declarations
     texture = std::make_shared<Texture>();
     if(!(texture->loadFromFile(spriteName))) {

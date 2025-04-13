@@ -5,15 +5,24 @@
 #include "../class_headers/Game.h"
 #include "../class_headers/GameConstants.h"
 #include "../class_headers/GameStates.h"
+#include <iostream>
 
 using namespace sf;
 
 Game::Game(){
     //set the first game state
-    gameState = STAGE_1;
+    gameState = MAIN_MENU;
 
     //construct the stages
     constructStages();
+
+    //construct the main menu
+    main = std::make_shared<MainMenu>();
+    main->setGameState(&gameState);
+    
+    //construct the stage menu
+    sm = std::make_shared<StageMenu>();
+    sm->setGameState(&gameState);
 
     //allocate necessary variables
     window = std::make_shared<RenderWindow>(sf::VideoMode(WIDTH,HEIGHT), TITLE);
@@ -53,6 +62,10 @@ void Game::gameDriver(){
     //use the current state's driver function
     switch(gameState){
         case MAIN_MENU:
+            main->driver(window);
+            break;
+        case STAGE_MENU:
+            sm->driver(window);
             break;
         case STAGE_1:
             stages[0]->driver(window);
@@ -68,4 +81,6 @@ void Game::constructStages(){
         "Stage1",     //the name of the stage (folder used for rounds)
         2             //max rounds for the stage
     ));
+    
+    stages[0]->setGameState(&gameState);
 }
