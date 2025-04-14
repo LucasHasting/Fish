@@ -69,7 +69,7 @@ class Stage : public Screen{
         bool isCollided(std::shared_ptr<T> sprite1, std::shared_ptr<U> sprite2);
     public:
         Stage(std::string, int, std::string);
-        void driver(std::shared_ptr<sf::RenderWindow>) override;
+        void driver(std::shared_ptr<RenderWindow>) override;
 };
 
 #endif

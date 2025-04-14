@@ -23,7 +23,7 @@ MainMenu::MainMenu(){
 }
 
 //method to display the main menu
-void MainMenu::driver(std::shared_ptr<sf::RenderWindow> window){
+void MainMenu::driver(std::shared_ptr<RenderWindow> window){
     this->window = window;
 
     //draw buttons and background

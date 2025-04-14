@@ -196,7 +196,7 @@ void Stage::constructRound(int round){
 }
 
 //the method used to display the screen
-void Stage::driver(std::shared_ptr<sf::RenderWindow> window) {
+void Stage::driver(std::shared_ptr<RenderWindow> window) {
     this->window = window;
 
     //draw the background

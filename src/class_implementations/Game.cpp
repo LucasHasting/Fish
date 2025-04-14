@@ -27,7 +27,7 @@ Game::Game(){
     sm->setGameState(&gameState);
 
     //allocate the window and set the camera's position
-    window = std::make_shared<RenderWindow>(sf::VideoMode(WIDTH,HEIGHT), TITLE);
+    window = std::make_shared<RenderWindow>(VideoMode(WIDTH,HEIGHT), TITLE);
     camera = std::make_shared<View>(FloatRect(WIDTH, WIDTH, HEIGHT, HEIGHT));
 
     //set the camera to the center 
@@ -86,10 +86,10 @@ void Game::driverShell(){
     while (window->isOpen())
     {
         //check to close the game
-        sf::Event event;
+        Event event;
         while (window->pollEvent(event))
         {
-            if(event.type == sf::Event::Closed){
+            if(event.type == Event::Closed){
                 window->close();
             }
         }

@@ -11,7 +11,7 @@
 
 class Screen{
     public:
-        virtual void driver(std::shared_ptr<sf::RenderWindow>) = 0;
+        virtual void driver(std::shared_ptr<RenderWindow>) = 0;
         virtual ~Screen() = default;
     public:
         //method to set the game state address
@@ -20,7 +20,7 @@ class Screen{
         }
     protected:
         std::string spriteLocation = "sprites/";
-        std::shared_ptr<sf::RenderWindow> window;
+        std::shared_ptr<RenderWindow> window;
         enum GameStates* gs;
 
         //templated isClicked method used in all children classes 

@@ -24,7 +24,7 @@ StageMenu::StageMenu(){
 }
 
 //method to display the main menu
-void StageMenu::driver(std::shared_ptr<sf::RenderWindow> window){
+void StageMenu::driver(std::shared_ptr<RenderWindow> window){
     this->window = window;
 
     //draw and buttons and background
