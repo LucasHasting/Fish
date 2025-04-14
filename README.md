@@ -10,4 +10,4 @@ WIP
 ![Fish](doc/UML/Fish.png "Fish")
 
 ## Finite State Machine
-![Fish](doc/FSM/FSM.PNG "Fish")
+![Fish](doc/FSM/FSM.png "Fish")
