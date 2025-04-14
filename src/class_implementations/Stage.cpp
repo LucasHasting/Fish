@@ -562,22 +562,22 @@ std::shared_ptr<Enemy> Stage::getEnemyType(char type){
 }
 
 //method used to calculate the position of the path going in a specefic direction
-Vector2f Stage::calculatePosition(Vector2f initial_pos, char direction, int count, int size){
+Vector2f Stage::calculatePosition(Vector2f initialPos, char direction, int count, int size){
     switch(direction){
         case 'u':
-            initial_pos.y -= size * count;
+            initialPos.y -= size * count;
             break;
         case 'd':
-            initial_pos.y += size * count;
+            initialPos.y += size * count;
             break;
         case 'l':
-            initial_pos.x -= size * count;
+            initialPos.x -= size * count;
             break;
         case 'r':
-            initial_pos.x += size * count;
+            initialPos.x += size * count;
             break;
     }
-    return initial_pos;
+    return initialPos;
 }
 
 //method used to draw multiple sprites stored in a vector

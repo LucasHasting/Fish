@@ -13,7 +13,7 @@ class Screen{
     public:
         virtual void driver(std::shared_ptr<RenderWindow>) = 0;
         virtual ~Screen() = default;
-    public:
+
         //method to set the game state address
         void setGameState(enum GameStates* ns){
             gs = ns;
