@@ -14,6 +14,7 @@ class StageMenu : public Screen{
     private:
         std::shared_ptr<NewSprite> stageOneButton = nullptr;
         std::shared_ptr<NewSprite> stageTwoButton = nullptr;
+        std::shared_ptr<NewSprite> background = nullptr;
     public:
         StageMenu();
         void driver(std::shared_ptr<sf::RenderWindow>) override;

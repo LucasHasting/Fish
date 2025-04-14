@@ -14,16 +14,19 @@ StageMenu::StageMenu(){
     //create the buttons
     stageOneButton = std::make_shared<NewSprite>(spriteLocation + "oneButton.png");
     stageTwoButton = std::make_shared<NewSprite>(spriteLocation + "twoButton.png");
+    background = std::make_shared<NewSprite>(spriteLocation + "mainMenu.png");
 
     //place the buttons
     stageOneButton->sprite->setPosition(CENTER_X-(TILE_SIZE/2), CENTER_Y-(TILE_SIZE/2) - TILE_SIZE*4);
     stageTwoButton->sprite->setPosition(CENTER_X-(TILE_SIZE/2), CENTER_Y-(TILE_SIZE/2) - TILE_SIZE*2);
+    background->sprite->setPosition(CENTER_X-(WIDTH/2), CENTER_Y-(HEIGHT/2));
 }
 
 void StageMenu::driver(std::shared_ptr<sf::RenderWindow> window){
     this->window = window;
 
-    //draw and buttons
+    //draw and buttons and background
+    window->draw(*(background->sprite));
     window->draw(*(stageOneButton->sprite));
     window->draw(*(stageTwoButton->sprite));
 

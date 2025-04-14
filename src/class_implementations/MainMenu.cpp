@@ -13,16 +13,19 @@ MainMenu::MainMenu(){
     //create the buttons
     stageButton = std::make_shared<NewSprite>(spriteLocation + "menuButton.png");
     quitButton = std::make_shared<NewSprite>(spriteLocation + "quitButton.png");
+    background = std::make_shared<NewSprite>(spriteLocation + "mainMenu.png");
 
     //place the buttons
     stageButton->sprite->setPosition(CENTER_X-(TILE_SIZE/2), CENTER_Y-(TILE_SIZE/2));
     quitButton->sprite->setPosition(CENTER_X-(TILE_SIZE/2), CENTER_Y-(TILE_SIZE/2) + TILE_SIZE*2);
+    background->sprite->setPosition(CENTER_X-(WIDTH/2), CENTER_Y-(HEIGHT/2));
 }
 
 void MainMenu::driver(std::shared_ptr<sf::RenderWindow> window){
     this->window = window;
 
-    //draw and buttons
+    //draw buttons and background
+    window->draw(*(background->sprite));
     window->draw(*(stageButton->sprite));
     window->draw(*(quitButton->sprite));
 

@@ -54,7 +54,7 @@ Stage::Stage(std::string stageName, int maxRounds, std::string backgroundSpriteL
     }
 
     //create the buttons
-    button = std::make_shared<NewSprite>(spriteLocation + "button.png");
+    button = std::make_shared<NewSprite>(spriteLocation + "playButton.png");
     finishedButton = std::make_shared<NewSprite>(spriteLocation + "menuButton.png");
 
     //place the round button in bottom corner
