@@ -15,24 +15,6 @@
 
 using namespace sf;
 
-//method used to reset the stage
-void Stage::reset(){
-    //reset important attributes
-    health = MAX_HEALTH;
-    money = STARTING_AMOUNT;
-    currentRound = 1; //start at the first round
-    
-    //delete placed tower info
-    placedTowers.clear();
-    placedTowerRadius.clear();
-
-    //default to tower state
-    stageState = TOWER;
-    
-    //place the finished button off screen
-    finishedButton->sprite->setPosition(-1000.f, -1000.f);
-}
-
 //construct the stage
 Stage::Stage(std::string stageName, int maxRounds, std::string backgroundSpriteLocation){
     //default to tower state
@@ -76,6 +58,55 @@ Stage::Stage(std::string stageName, int maxRounds, std::string backgroundSpriteL
     constructTowers();
 }
 
+//method used to construct the path that enemies follow
+void Stage::constructPath() {
+    //create input file stream
+    std::ifstream pathFile(pathFileLocation);
+    
+    //stop the program if it could not open the file
+    if(!pathFile.is_open()){
+        exit(1);
+    }
+
+    //store the path into a variable
+    std::string pathString;
+    std::getline(pathFile, pathString);
+
+    //close the path file
+    pathFile.close();
+    
+    //create temp vectors for getting direction character and the count of that direction
+    std::vector<char> direction;
+    std::vector<int> spriteCount;
+
+    //loop through the path string and add contents to corresponding vectors
+    for(int i = 0; pathString[i] != '0'; i += 2){
+        spriteCount.push_back(pathString[i] + ASCII_SHIFT);
+        direction.push_back(pathString[i+1]);
+    }
+    
+    //set initial position
+    Vector2f initialPosition = {FIRST_TILE_CENTER_X, FIRST_TILE_CENTER_Y};
+    initialPosition = calculatePosition(initialPosition, direction[0], spriteCount[0], TILE_SIZE);
+    
+    //set all sprites in the path
+    for(long unsigned int i = 1; i < spriteCount.size(); ++i){
+        for(int j = 0; j < spriteCount[i]; ++j){
+            //allocate sprite
+            path.push_back(std::make_shared<NewSprite>(pathSpriteLocation));
+
+            //update position
+            initialPosition = calculatePosition(initialPosition, direction[i], 1, TILE_SIZE);
+
+            //set position
+            path[path.size()-1]->sprite->setPosition(initialPosition);
+            
+            //save the direction of the sprite into a vector for the enemies
+            directions.push_back(direction[i]);
+        }
+    }
+}
+
 //method to construct the towers
 void Stage::constructTowers(){
     //construct the first tower
@@ -106,6 +137,63 @@ void Stage::constructTowers(){
     }
 }
 
+//method used to construct the specefic round of enemies
+void Stage::constructRound(int round){
+    //convert round to char
+    char roundChar = round - ASCII_SHIFT;
+
+    //change round file
+    enemyFileLocation[enemyFileLocation.size()-5] = roundChar;
+
+    //create input file stream
+    std::ifstream enemyFile(enemyFileLocation);
+    
+    //stop the program if it could not open the file
+    if(!enemyFile.is_open()){
+        exit(1);
+    }
+
+    //store the enemies into a variable
+    std::string enemy_string;
+    std::getline(enemyFile, enemy_string);
+
+    //close the path file
+    enemyFile.close();
+
+    //create temp vectors for getting enemy count and the type of the enemy
+    std::vector<int> enemy_count;
+    std::vector<char> enemy_type;
+    
+    //loop through the path string and add contents to corresponding vectors
+    for(int i = 0; enemy_string[i] != '0'; i += 2){
+        enemy_count.push_back(enemy_string[i] + ASCII_SHIFT);
+        enemy_type.push_back(enemy_string[i+1]);
+    }
+    
+    //get initial pos (from the path) for the enemies
+    Vector2f currentEnemyPos = path[0]->sprite->getPosition();
+    currentEnemyPos.x -= TILE_SIZE;
+
+    //initial used to go backwards
+    int initial = -1;
+
+    //set all sprites in the path, starts behind first path tile and goes backward
+    for(long unsigned int i = 0; i < enemy_count.size(); ++i){
+        for(int j = 0; j < enemy_count[i]; ++j){
+            //set position of enemy
+            roundEnemies.push_back(getEnemyType(enemy_type[i]));
+            roundEnemies[roundEnemies.size()-1]->sprite->setPosition(currentEnemyPos);
+            correspondingTile.push_back(initial);
+            initial--;
+
+            //allocate is dead flag for the enemy
+            isDead.push_back(false);
+
+            //update position
+            currentEnemyPos.x -= TILE_SIZE;
+        }
+    }
+}
 
 //the method used to display the screen
 void Stage::driver(std::shared_ptr<sf::RenderWindow> window) {
@@ -219,9 +307,9 @@ void Stage::towerDriver(){
             }
             
             //place the tower (only allow within a second to be comprehensible)
-            if(!checkPath && isClicked(stageTowers[towerPos]) && frame_count <= 0){
+            if(!checkPath && isClicked(stageTowers[towerPos]) && frameCount <= 0){
                 //reset the frame counter
-                frame_count = TILE_SIZE;
+                frameCount = TILE_SIZE;
 
                 //drop the tower
                 towerDrag = false;
@@ -245,7 +333,7 @@ void Stage::towerDriver(){
                 stageTowers[towerPos]->sprite->setScale(0.5f, 0.5f);
                 stageTowers[towerPos]->sprite->setPosition(originalPos);
             }
-            frame_count--;
+            frameCount--;
         }
 
         //check if the round button has been clicked
@@ -261,7 +349,7 @@ void Stage::towerDriver(){
             stageState = ROUND;
 
             //reset frame count for timing
-            frame_count = TILE_SIZE;
+            frameCount = TILE_SIZE;
         }
 
         //loop through towers and see if any have been clicked
@@ -304,7 +392,7 @@ void Stage::roundDriver(){
         moveEnemies();
 
         //decrement frame count 
-        frame_count--;
+        frameCount--;
 }
 
 //method used to display the screen whenever the stage is in the WIN or LOOSE state
@@ -334,156 +422,22 @@ void Stage::finishedDriver(std::string finishedText){
         window->display();
 }
 
-//method used to construct the path that enemies follow
-void Stage::constructPath() {
-    //create input file stream
-    std::ifstream pathFile(pathFileLocation);
+//method used to reset the stage
+void Stage::reset(){
+    //reset important attributes
+    health = MAX_HEALTH;
+    money = STARTING_AMOUNT;
+    currentRound = 1; //start at the first round
     
-    //stop the program if it could not open the file
-    if(!pathFile.is_open()){
-        exit(1);
-    }
+    //delete placed tower info
+    placedTowers.clear();
+    placedTowerRadius.clear();
 
-    //store the path into a variable
-    std::string path_string;
-    std::getline(pathFile, path_string);
-
-    //close the path file
-    pathFile.close();
+    //default to tower state
+    stageState = TOWER;
     
-    //create temp vectors for getting direction character and the count of that direction
-    std::vector<char> direction;
-    std::vector<int> sprite_count;
-
-    //loop through the path string and add contents to corresponding vectors
-    for(int i = 0; path_string[i] != '0'; i += 2){
-        sprite_count.push_back(path_string[i] + ASCII_SHIFT);
-        direction.push_back(path_string[i+1]);
-    }
-    
-    //set initial position
-    Vector2f initial_position = {FIRST_TILE_CENTER_X, FIRST_TILE_CENTER_Y};
-    initial_position = calculate_position(initial_position, direction[0], sprite_count[0], TILE_SIZE);
-    
-    //set all sprites in the path
-    for(long unsigned int i = 1; i < sprite_count.size(); ++i){
-        for(int j = 0; j < sprite_count[i]; ++j){
-            //allocate sprite
-            path.push_back(std::make_shared<NewSprite>(pathSpriteLocation));
-
-            //update position
-            initial_position = calculate_position(initial_position, direction[i], 1, TILE_SIZE);
-
-            //set position
-            path[path.size()-1]->sprite->setPosition(initial_position);
-            
-            //save the direction of the sprite into a vector for the enemies
-            directions.push_back(direction[i]);
-        }
-    }
-}
-
-//method used to construct the specefic round of enemies
-void Stage::constructRound(int round){
-    //convert round to char
-    char roundChar = round - ASCII_SHIFT;
-
-    //change round file
-    enemyFileLocation[enemyFileLocation.size()-5] = roundChar;
-
-    //create input file stream
-    std::ifstream enemyFile(enemyFileLocation);
-    
-    //stop the program if it could not open the file
-    if(!enemyFile.is_open()){
-        exit(1);
-    }
-
-    //store the enemies into a variable
-    std::string enemy_string;
-    std::getline(enemyFile, enemy_string);
-
-    //close the path file
-    enemyFile.close();
-
-    //create temp vectors for getting enemy count and the type of the enemy
-    std::vector<int> enemy_count;
-    std::vector<char> enemy_type;
-    
-    //loop through the path string and add contents to corresponding vectors
-    for(int i = 0; enemy_string[i] != '0'; i += 2){
-        enemy_count.push_back(enemy_string[i] + ASCII_SHIFT);
-        enemy_type.push_back(enemy_string[i+1]);
-    }
-    
-    //get initial pos (from the path) for the enemies
-    Vector2f currentEnemyPos = path[0]->sprite->getPosition();
-    currentEnemyPos.x -= TILE_SIZE;
-
-    //initial used to go backwards
-    int initial = -1;
-
-    //set all sprites in the path, starts behind first path tile and goes backward
-    for(long unsigned int i = 0; i < enemy_count.size(); ++i){
-        for(int j = 0; j < enemy_count[i]; ++j){
-            //set position of enemy
-            roundEnemies.push_back(getEnemyType(enemy_type[i]));
-            roundEnemies[roundEnemies.size()-1]->sprite->setPosition(currentEnemyPos);
-            correspondingTile.push_back(initial);
-            initial--;
-
-            //allocate is dead flag for the enemy
-            isDead.push_back(false);
-
-            //update position
-            currentEnemyPos.x -= TILE_SIZE;
-        }
-    }
-}
-
-//method used to get a specefic enemy based on a character
-std::shared_ptr<Enemy> Stage::getEnemyType(char type){
-    switch(type){
-        case 'r':
-            return std::make_shared<Enemy>(spriteLocation + "redFish.png", 10);
-        case 'b':
-            return std::make_shared<Enemy>(spriteLocation + "bossFish.png", 100);
-        case 'g':
-            return std::make_shared<Enemy>(spriteLocation + "greenFish.png", 20);
-        case 'o':
-            return std::make_shared<Enemy>(spriteLocation + "orangeFish.png", 30);
-        case 'p':
-            return std::make_shared<Enemy>(spriteLocation + "purpleFish.png", 40);
-        default:
-            return nullptr;
-    }
-}
-
-//method used to calculate the position of the path going in a specefic direction
-Vector2f Stage::calculate_position(Vector2f initial_pos, char direction, int count, int size){
-    switch(direction){
-        case 'u':
-            initial_pos.y -= size * count;
-            break;
-        case 'd':
-            initial_pos.y += size * count;
-            break;
-        case 'l':
-            initial_pos.x -= size * count;
-            break;
-        case 'r':
-            initial_pos.x += size * count;
-            break;
-    }
-    return initial_pos;
-}
-
-//method used to draw multiple sprites stored in a vector
-template <typename T>
-void Stage::drawMultipleSprites(std::vector<std::shared_ptr<T>> vec) {
-    for(long unsigned int i = 0; i < vec.size(); ++i){
-        window->draw(*(vec[i]->sprite));
-    }
+    //place the finished button off screen
+    finishedButton->sprite->setPosition(-1000.f, -1000.f);
 }
 
 //method used to move the enemies along the path
@@ -506,12 +460,12 @@ void Stage::moveEnemies(){
     if(end){
         //change stage state to tower and reset frame count for time
         stageState = TOWER;
-        frame_count = TILE_SIZE;
+        frameCount = TILE_SIZE;
         return;
     }
 
     //happens every second
-    if(frame_count == 0){
+    if(frameCount == 0){
         for(long unsigned int i = 0; i < roundEnemies.size(); ++i){
             //increment the tile that corresponds to the enemies location
             correspondingTile[i] += 1;
@@ -542,7 +496,7 @@ void Stage::moveEnemies(){
         }
         
         //reset frame count for the timer
-        frame_count = TILE_SIZE;
+        frameCount = TILE_SIZE;
     }
 
     //loop for every enemy in the current round
@@ -568,11 +522,72 @@ void Stage::moveEnemies(){
         if(correspondingTile[i] <= 0){
             currentEnemyPos.x += 1;
         } else {
-            currentEnemyPos = calculate_position(currentEnemyPos, directions[correspondingTile[i]+1], 1, 1);
+            currentEnemyPos = calculatePosition(currentEnemyPos, directions[correspondingTile[i]+1], 1, 1);
         }
 
         //set the position of the enemy
         roundEnemies[i]->sprite->setPosition(currentEnemyPos);
+    }
+}
+
+//method used to display the raidus of a tower when the mouse hovers over it's position
+void Stage::hoverTower(){
+    //get mouse pos
+    Vector2f mouse = window->mapPixelToCoords(Mouse::getPosition(*window));
+
+    //check to see if the mouse is on top of any placed tower
+    //if so, draw it
+    for(long unsigned int i = 0; i < placedTowerRadius.size(); ++i){
+        FloatRect bounds = placedTowers[i]->sprite->getGlobalBounds();
+        if(bounds.contains(mouse)){
+            placedTowerRadius[i]->sprite->setColor(Color(255,255,255,128));
+            window->draw(*placedTowerRadius[i]->sprite);
+        }
+    }
+}
+
+//method used to get a specefic enemy based on a character
+std::shared_ptr<Enemy> Stage::getEnemyType(char type){
+    switch(type){
+        case 'r':
+            return std::make_shared<Enemy>(spriteLocation + "redFish.png", 10);
+        case 'b':
+            return std::make_shared<Enemy>(spriteLocation + "bossFish.png", 100);
+        case 'g':
+            return std::make_shared<Enemy>(spriteLocation + "greenFish.png", 20);
+        case 'o':
+            return std::make_shared<Enemy>(spriteLocation + "orangeFish.png", 30);
+        case 'p':
+            return std::make_shared<Enemy>(spriteLocation + "purpleFish.png", 40);
+        default:
+            return nullptr;
+    }
+}
+
+//method used to calculate the position of the path going in a specefic direction
+Vector2f Stage::calculatePosition(Vector2f initial_pos, char direction, int count, int size){
+    switch(direction){
+        case 'u':
+            initial_pos.y -= size * count;
+            break;
+        case 'd':
+            initial_pos.y += size * count;
+            break;
+        case 'l':
+            initial_pos.x -= size * count;
+            break;
+        case 'r':
+            initial_pos.x += size * count;
+            break;
+    }
+    return initial_pos;
+}
+
+//method used to draw multiple sprites stored in a vector
+template <typename T>
+void Stage::drawMultipleSprites(std::vector<std::shared_ptr<T>> vec) {
+    for(long unsigned int i = 0; i < vec.size(); ++i){
+        window->draw(*(vec[i]->sprite));
     }
 }
 
@@ -583,20 +598,4 @@ bool Stage::isCollided(std::shared_ptr<T> sprite1, std::shared_ptr<U> sprite2){
     FloatRect sprite2Bounds = sprite2->sprite->getGlobalBounds();
 
     return sprite1Bounds.intersects(sprite2Bounds);
-}
-
-//method used to display the raidus of a tower when the mouse hovers over it's position
-void Stage::hoverTower(){
-        //get mouse pos
-        Vector2f mouse = window->mapPixelToCoords(Mouse::getPosition(*window));
-
-        //check to see if the mouse is on top of any placed tower
-        //if so, draw it
-        for(long unsigned int i = 0; i < placedTowerRadius.size(); ++i){
-            FloatRect bounds = placedTowers[i]->sprite->getGlobalBounds();
-            if(bounds.contains(mouse)){
-                placedTowerRadius[i]->sprite->setColor(Color(255,255,255,128));
-                window->draw(*placedTowerRadius[i]->sprite);
-            }
-        }
 }

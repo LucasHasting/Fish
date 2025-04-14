@@ -27,7 +27,7 @@ class Stage : public Screen{
         int towerPos = -1;
         int maxRounds = 0;
         int currentRound = 0;
-        int frame_count = TILE_SIZE;
+        int frameCount = TILE_SIZE;
         int health = MAX_HEALTH;
         int money = STARTING_AMOUNT;
         std::string pathLocation = "paths/";
@@ -50,17 +50,17 @@ class Stage : public Screen{
         std::vector<std::shared_ptr<Text>> towerCostText;
         std::vector<bool> isDead;
         Vector2f originalPos;
-        void reset();
-        void moveEnemies();
         void constructPath();
         void constructTowers();
         void constructRound(int);
         void towerDriver();
         void roundDriver();
         void finishedDriver(std::string);
+        void reset();
+        void moveEnemies();
         void hoverTower();
         std::shared_ptr<Enemy> getEnemyType(char);
-        Vector2f calculate_position(Vector2f, char, int, int);
+        Vector2f calculatePosition(Vector2f, char, int, int);
         
         template <typename T>
         void drawMultipleSprites(std::vector<std::shared_ptr<T>>);
