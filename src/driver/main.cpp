@@ -10,7 +10,12 @@ using namespace sf;
 
 int main(int argc, char const *argv[])
 {
+    //create the game
     std::shared_ptr<Game> game = std::make_shared<Game>();
+    
+    //play the game
     game->driverShell();
+
+    //program finished :)
     return 0;
 }
