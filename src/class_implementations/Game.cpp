@@ -10,6 +10,7 @@
 
 using namespace sf;
 
+//Construct the game
 Game::Game(){
     //set the first game state
     gameState = MAIN_MENU;
@@ -25,11 +26,11 @@ Game::Game(){
     sm = std::make_shared<StageMenu>();
     sm->setGameState(&gameState);
 
-    //allocate necessary variables
+    //allocate the window and set the camera's position
     window = std::make_shared<RenderWindow>(sf::VideoMode(WIDTH,HEIGHT), TITLE);
     camera = std::make_shared<View>(FloatRect(WIDTH, WIDTH, HEIGHT, HEIGHT));
 
-    //set camera center 
+    //set the camera to the center 
     camera->setCenter(CENTER_X, CENTER_Y);
     
     //set the camera to the window
@@ -37,20 +38,31 @@ Game::Game(){
 }
 
 
+//method used to set the current song and play it
 void Game::playFile(std::string songFile, int musicIndex){
+    //if the current song is not playing
     if(!musicPlaying[musicIndex]){
-          if(currentMusic != nullptr){
+        //if a song has been set, stop it  
+        if(currentMusic != nullptr){
               currentMusic->stop();
-          }
-          currentMusic = std::make_shared<Music>();
-          currentMusic->openFromFile(songFile);
-          currentMusic->play();
-          currentMusic->setLoop(true);
-          musicPlaying[musicIndex] = true;
+        }
+
+        //set the current song from a file
+        currentMusic = std::make_shared<Music>();
+        currentMusic->openFromFile(songFile);
+
+        //play the song and set it to loop
+        currentMusic->play();
+        currentMusic->setLoop(true);
+
+        //set the current song to playing
+        musicPlaying[musicIndex] = true;
      }
 }
 
+//method used to play the current state's music
 void Game::playMusic(){
+    //select the current state's music and set all other tracks to false
     switch(gameState){
         case MAIN_MENU:
         case STAGE_MENU:
@@ -69,6 +81,7 @@ void Game::playMusic(){
     }
 }
 
+//method works as the shell for the driver
 void Game::driverShell(){
     while (window->isOpen())
     {
@@ -84,7 +97,7 @@ void Game::driverShell(){
         //clear the screen
         window->clear();
 
-        //use the current state's driver function
+        //use the current state's driver method
         gameDriver();
 
         //set the FPS
@@ -92,9 +105,12 @@ void Game::driverShell(){
     }
 }
 
+//method selects the current state's driver
 void Game::gameDriver(){
+    //play the current state's song
     playMusic();
-    //use the current state's driver function
+
+    //use the current state's driver method
     switch(gameState){
         case MAIN_MENU:
             main->driver(window);
@@ -111,20 +127,24 @@ void Game::gameDriver(){
     }
 }
 
+//method used to construct the stage
 void Game::constructStages(){
     //Stage 1 - example descriptions for future stages
     stages.push_back(std::make_shared<Stage>(
-        "Stage1",     //the name of the stage (folder used for rounds)
-        2,            //max rounds for the stage
-        "newBackground.png"
+        "Stage1",           //the name of the stage (folder used for rounds and the path file)
+        2,                  //max rounds for the stage
+        "newBackground.png" //name of the background image
     ));
 
+    //Create stage 2
     stages.push_back(std::make_shared<Stage>(
         "Stage2",
         2,
         "lavaBackgroundNew.png"
     ));
     
+    //Loop through the stages and set the address of the game state so the stage
+    //can change the game's state
     for(unsigned long int i = 0; i < stages.size(); ++i){
         stages[i]->setGameState(&gameState);
     }

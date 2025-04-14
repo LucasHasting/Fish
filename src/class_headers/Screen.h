@@ -14,7 +14,7 @@ class Screen{
         virtual void driver(std::shared_ptr<sf::RenderWindow>) = 0;
         virtual ~Screen() = default;
     public:
-        //method to change state
+        //method to set the game state address
         void setGameState(enum GameStates* ns){
             gs = ns;
         }
@@ -23,19 +23,22 @@ class Screen{
         std::shared_ptr<sf::RenderWindow> window;
         enum GameStates* gs;
 
-        //templated isClicked method used in all children classes
+        //templated isClicked method used in all children classes 
+        //to tell if a sprite has been clicked by the mouse
         template <typename T>
         bool isClicked(std::shared_ptr<T> sprite){
+            
+            //if the left mouse has been clicked
             if(Mouse::isButtonPressed(Mouse::Left)){
+                //return true if the mouse is in the bounds of the sprite, false otherwise
                 Vector2f mouse = window->mapPixelToCoords(Mouse::getPosition(*window));
-
                 FloatRect bounds = sprite->sprite->getGlobalBounds();
-                
                 return bounds.contains(mouse);         
             }
+
+            //the mouse has not been clicked
             return false;
         }
-
 };
 
 #endif

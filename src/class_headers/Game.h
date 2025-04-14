@@ -15,6 +15,7 @@ using namespace sf;
 class Game {
     private:
         enum GameStates gameState;
+        bool musicPlaying[3] = {false, false, false};
         std::vector<std::shared_ptr<Stage>> stages;
         std::shared_ptr<MainMenu> main;
         std::shared_ptr<StageMenu> sm;
@@ -22,7 +23,6 @@ class Game {
         std::shared_ptr<RenderWindow> window = nullptr;
         std::shared_ptr<Music> currentMusic = nullptr;
         void playFile(std::string, int);
-        bool musicPlaying[3] = {false, false, false};
         void playMusic();
         void gameDriver();
         void constructStages();

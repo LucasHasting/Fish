@@ -16,6 +16,11 @@ using namespace sf;
 
 class Stage : public Screen{
     private:
+        Font endFont;
+        Font stageFont;
+        Text roundText;
+        Text healthText;
+        Text moneyText;
         enum StageStates stageState;
         bool needsConstruction = true;
         bool towerDrag = false;
@@ -25,16 +30,16 @@ class Stage : public Screen{
         int frame_count = TILE_SIZE;
         int health = MAX_HEALTH;
         int money = STARTING_AMOUNT;
-        std::shared_ptr<NewSprite> button = nullptr;
-        std::shared_ptr<NewSprite> finishedButton = nullptr;
-        std::shared_ptr<NewSprite> pathSprite = nullptr;
-        std::shared_ptr<NewSprite> background = nullptr;
         std::string pathLocation = "paths/";
         std::string enemyLocation = "rounds/";
         std::string pathSpriteLocation = spriteLocation; 
         std::string backgroundSpriteLocation = spriteLocation; 
         std::string pathFileLocation = pathLocation; 
         std::string enemyFileLocation = enemyLocation;
+        std::shared_ptr<NewSprite> button = nullptr;
+        std::shared_ptr<NewSprite> finishedButton = nullptr;
+        std::shared_ptr<NewSprite> pathSprite = nullptr;
+        std::shared_ptr<NewSprite> background = nullptr;
         std::vector<char> directions;
         std::vector<std::shared_ptr<NewSprite>> path;
         std::vector<std::shared_ptr<Enemy>> roundEnemies;
@@ -44,13 +49,7 @@ class Stage : public Screen{
         std::vector<int> correspondingTile;
         std::vector<std::shared_ptr<Text>> towerCostText;
         std::vector<bool> isDead;
-        Font endFont;
-        Font stageFont;
-        Text roundText;
-        Text healthText;
-        Text moneyText;
         Vector2f originalPos;
-        std::shared_ptr<Enemy> getEnemyType(char);
         void reset();
         void moveEnemies();
         void constructPath();
@@ -60,6 +59,7 @@ class Stage : public Screen{
         void roundDriver();
         void finishedDriver(std::string);
         void hoverTower();
+        std::shared_ptr<Enemy> getEnemyType(char);
         Vector2f calculate_position(Vector2f, char, int, int);
         
         template <typename T>
