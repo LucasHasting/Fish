@@ -11,7 +11,7 @@
    git clone https://github.com/LucasHasting/Fish.git
    cd Fish/src
    make compile
-   make start
+   make run
    ```
 
 ## Running Example
