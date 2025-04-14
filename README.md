@@ -15,7 +15,9 @@
    ```
 
 ## Running Example
-WIP
+A video demonstarting the project can be found below:
+
+[![fish](doc/running_example.png)](https://drive.google.com/file/d/12SalR1BYstqQ3cYTxQiOnDwnHCKUlSt0/view?resourcekey)
 
 ## UML Class Diagram
 ![Fish](doc/UML/Fish.png "Fish")
