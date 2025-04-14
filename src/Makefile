@@ -4,10 +4,10 @@ OBJS := $(SRCS:.cpp=.o)
 
 compile: $(OBJS)
 	g++ -c -g -Wall ./driver/main.cpp ${SRCS}
-	g++ main.o ${OBJS} -o app -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+	g++ main.o ${OBJS} -o fish -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
 run:
-	./app
+	./fish
 
 clean:
 	@rm *.o

@@ -132,14 +132,14 @@ void Game::constructStages(){
     //Stage 1 - example descriptions for future stages
     stages.push_back(std::make_shared<Stage>(
         "Stage1",           //the name of the stage (folder used for rounds and the path file)
-        2,                  //max rounds for the stage
+        5,                  //max rounds for the stage
         "newBackground.png" //name of the background image
     ));
 
     //Create stage 2
     stages.push_back(std::make_shared<Stage>(
         "Stage2",
-        2,
+        5,
         "lavaBackgroundNew.png"
     ));
     

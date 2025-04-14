@@ -256,9 +256,6 @@ void Stage::towerDriver(){
             stageState = WIN;
             return;
         }
-        
-        //draw the path to the screen
-        drawMultipleSprites(path);
 
         //display the towers
         drawMultipleSprites(stageTowers);
