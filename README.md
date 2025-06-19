@@ -1,5 +1,10 @@
 # Fish
 
+## Contribution
+Lucas Hasting: Game Designer, Director, and Programmer
+Raiden Greene: Music Designer
+Mel Hart: Art Designer
+
 ## Installation
 1. [Install git](https://git-scm.com/downloads)
 2. [Install SFML](https://www.sfml-dev.org/tutorials/3.0/)
