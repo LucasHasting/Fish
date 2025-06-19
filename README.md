@@ -2,7 +2,9 @@
 
 ## Contribution
 Lucas Hasting: Game Designer, Director, and Programmer
+
 Raiden Greene: Music Designer
+
 Mel Hart: Art Designer
 
 ## Installation
